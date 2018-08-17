@@ -87,6 +87,7 @@ class Controller(object):
             
             if self._check_ft_threshold(ft):
                 if self._mode == 0:
+                    rospy.loginfo("Controller Mode set to Stop, Trajectory Aborted")
                     self._trajectory.abort_trajectory()
                     pass
                 elif self._mode == 1:
@@ -114,8 +115,10 @@ class Controller(object):
                 else:
                     pass
             else:
+                rospy.loginfo("Force Torque Threshold Exceeded, Trajectory Aborted")
                 self._trajectory.abort_trajectory()
                 self._mode = 0
+
             
             
             joint_state_msg = fill_joint_state_msg(self._current_joint_angles,now)            
@@ -170,10 +173,13 @@ class Controller(object):
         if np.shape(self._ft_threshold) != (6,):
             return True
         if ft is None:
+            rospy.loginfo("Force Torque Data Not Received")
             return False # Stop if invalid wrench
         if np.all(self._ft_threshold < 1e-6):
             return True
         if np.any(np.logical_and((self._ft_threshold > 1e-6), (np.abs(ft) > self._ft_threshold))):
+            rospy.loginfo("Force Torque Threshold Exceeded")
+            rospy.loginfo(str(ft))
             return False        
         return True
     

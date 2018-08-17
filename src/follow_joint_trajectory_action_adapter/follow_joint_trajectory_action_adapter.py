@@ -79,7 +79,7 @@ class FollowJointTrajectoryActionAdapter(object):
                 interps.append(pchip) 
             
             self._abort_trajectory()
-            
+
             self._trajectory_gh = gh
             self._trajectory_max_t = t[-1]
             self._trajectory_interp = interps
@@ -99,7 +99,7 @@ class FollowJointTrajectoryActionAdapter(object):
             trajectory_angles=self._get_trajectory_joint_angles(self._trajectory_t)
             #TODO: improve trajectory error tracking
             if (np.any(np.abs(trajectory_angles-joint_angles) > np.deg2rad(45))):
-                print "Trajectory aborted due to tracking error: " + str(np.rad2deg(trajectory_angles-joint_angles)) 
+                rospy.logerr("Trajectory aborted due to tracking error: %s", str(np.rad2deg(trajectory_angles-joint_angles)))
                 self._abort_trajectory()
             else:            
                 fb = FollowJointTrajectoryFeedback()
